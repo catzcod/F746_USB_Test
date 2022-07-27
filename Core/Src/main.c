@@ -18,11 +18,13 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "usb_device.h"
+//#include "usb_device.h"
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
-
+#include "usb_audio.h"
+#include <string.h>
+#include <stdio.h>
 /* USER CODE END Includes */
 
 /* Private typedef -----------------------------------------------------------*/
@@ -42,10 +44,6 @@
 /* Private variables ---------------------------------------------------------*/
 ADC_HandleTypeDef hadc1;
 
-I2S_HandleTypeDef hi2s1;
-
-SAI_HandleTypeDef hsai_BlockA1;
-
 UART_HandleTypeDef huart3;
 
 /* USER CODE BEGIN PV */
@@ -63,8 +61,6 @@ void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
 static void MX_USART3_UART_Init(void);
 static void MX_ADC1_Init(void);
-static void MX_I2S1_Init(void);
-static void MX_SAI1_Init(void);
 /* USER CODE BEGIN PFP */
 #if USE_AUDIO_TIMER_VOLUME_CTRL
 static HAL_StatusTypeDef Timer_Init(void);
@@ -75,6 +71,10 @@ extern USBD_AUDIO_InterfaceCallbacksfTypeDef audio_class_interface;
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+#define ADC_0V_VALUE                                             0
+#define ADC_1V_VALUE                                             1241
+#define ADC_2V_VALUE                                             2482
+#define ADC_3V_VALUE                                             3723
 
 /* USER CODE END 0 */
 
@@ -109,8 +109,6 @@ int main(void)
   MX_USART3_UART_Init();
   //MX_USB_DEVICE_Init();
   MX_ADC1_Init();
-  MX_I2S1_Init();
-  MX_SAI1_Init();
   /* USER CODE BEGIN 2 */
 	/* Init Device Library */
 	USBD_Init(&USBD_Device, &AUDIO_Desc, 0);
@@ -127,8 +125,34 @@ int main(void)
 
   /* Infinite loop */
   /* USER CODE BEGIN WHILE */
+
+	  char msg[10];
+
 	while (1)
 	{
+	    // Get ADC value
+	    HAL_ADC_Start(&hadc1);
+	    HAL_ADC_PollForConversion(&hadc1, HAL_MAX_DELAY);
+	    uint32_t adcResult = HAL_ADC_GetValue(&hadc1);
+
+	    // Test: Set GPIO pin low
+	    HAL_GPIO_WritePin(GPIOA, GPIO_PIN_10, GPIO_PIN_RESET);
+
+	    // Convert to string and print
+	    sprintf(msg, "%hu\r\n", adcResult);
+	    HAL_UART_Transmit(&huart3, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
+
+
+
+
+			GPIO_PinState ps;
+			ps = ((adcResult >= ADC_0V_VALUE) && (adcResult < ADC_1V_VALUE)) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+			HAL_GPIO_WritePin(LD1_GPIO_Port, LD1_Pin, ps);
+			ps = ((adcResult >= ADC_1V_VALUE) && (adcResult < ADC_2V_VALUE)) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+			HAL_GPIO_WritePin(LD2_GPIO_Port, LD2_Pin, ps);
+			ps = ((adcResult >= ADC_2V_VALUE) && (adcResult < ADC_3V_VALUE)) ? GPIO_PIN_SET : GPIO_PIN_RESET;
+			HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, ps);
+
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */
@@ -238,75 +262,6 @@ static void MX_ADC1_Init(void)
 }
 
 /**
-  * @brief I2S1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_I2S1_Init(void)
-{
-
-  /* USER CODE BEGIN I2S1_Init 0 */
-
-  /* USER CODE END I2S1_Init 0 */
-
-  /* USER CODE BEGIN I2S1_Init 1 */
-
-  /* USER CODE END I2S1_Init 1 */
-  hi2s1.Instance = SPI1;
-  hi2s1.Init.Mode = I2S_MODE_MASTER_TX;
-  hi2s1.Init.Standard = I2S_STANDARD_PHILIPS;
-  hi2s1.Init.DataFormat = I2S_DATAFORMAT_16B;
-  hi2s1.Init.MCLKOutput = I2S_MCLKOUTPUT_DISABLE;
-  hi2s1.Init.AudioFreq = I2S_AUDIOFREQ_48K;
-  hi2s1.Init.CPOL = I2S_CPOL_LOW;
-  hi2s1.Init.ClockSource = I2S_CLOCK_PLL;
-  if (HAL_I2S_Init(&hi2s1) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN I2S1_Init 2 */
-
-  /* USER CODE END I2S1_Init 2 */
-
-}
-
-/**
-  * @brief SAI1 Initialization Function
-  * @param None
-  * @retval None
-  */
-static void MX_SAI1_Init(void)
-{
-
-  /* USER CODE BEGIN SAI1_Init 0 */
-
-  /* USER CODE END SAI1_Init 0 */
-
-  /* USER CODE BEGIN SAI1_Init 1 */
-
-  /* USER CODE END SAI1_Init 1 */
-  hsai_BlockA1.Instance = SAI1_Block_A;
-  hsai_BlockA1.Init.AudioMode = SAI_MODEMASTER_TX;
-  hsai_BlockA1.Init.Synchro = SAI_ASYNCHRONOUS;
-  hsai_BlockA1.Init.OutputDrive = SAI_OUTPUTDRIVE_DISABLE;
-  hsai_BlockA1.Init.NoDivider = SAI_MASTERDIVIDER_ENABLE;
-  hsai_BlockA1.Init.FIFOThreshold = SAI_FIFOTHRESHOLD_EMPTY;
-  hsai_BlockA1.Init.AudioFrequency = SAI_AUDIO_FREQUENCY_192K;
-  hsai_BlockA1.Init.SynchroExt = SAI_SYNCEXT_DISABLE;
-  hsai_BlockA1.Init.MonoStereoMode = SAI_STEREOMODE;
-  hsai_BlockA1.Init.CompandingMode = SAI_NOCOMPANDING;
-  hsai_BlockA1.Init.TriState = SAI_OUTPUT_NOTRELEASED;
-  if (HAL_SAI_InitProtocol(&hsai_BlockA1, SAI_I2S_STANDARD, SAI_PROTOCOL_DATASIZE_16BIT, 2) != HAL_OK)
-  {
-    Error_Handler();
-  }
-  /* USER CODE BEGIN SAI1_Init 2 */
-
-  /* USER CODE END SAI1_Init 2 */
-
-}
-
-/**
   * @brief USART3 Initialization Function
   * @param None
   * @retval None
@@ -351,7 +306,6 @@ static void MX_GPIO_Init(void)
   GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOE_CLK_ENABLE();
   __HAL_RCC_GPIOC_CLK_ENABLE();
   __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
@@ -448,6 +402,10 @@ void Error_Handler(void)
 	__disable_irq();
 	while (1)
 	{
+		GPIO_PinState ps = GPIO_PIN_SET;
+		HAL_GPIO_WritePin(LD3_GPIO_Port, LD1_Pin, ps);
+		HAL_GPIO_WritePin(LD3_GPIO_Port, LD2_Pin, ps);
+		HAL_GPIO_WritePin(LD3_GPIO_Port, LD3_Pin, ps);
 	}
   /* USER CODE END Error_Handler_Debug */
 }

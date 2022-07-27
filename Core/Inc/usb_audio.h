@@ -39,6 +39,7 @@
 #define USB_FIFO_WORD_SIZE  1024U
 #endif  /*  USE_USB_FS */
 
+   
 #if USE_USB_AUDIO_PLAYBACK
 /*play session : list of terminal and unit id for audio function */
 /* must be greater than the highest interface number(to avoid request destination confusion */
@@ -93,7 +94,8 @@
 
 #endif /*USE_AUDIO_PLAYBACK*/
 
-#if USE_USB_AUDIO_RECORDING
+
+#if  USE_USB_AUDIO_RECORDING   
 /*record session : list of terminal and unit id for audio function */
 /* must be greater than the highest interface number(to avoid request destination confusion */
 #define USB_AUDIO_CONFIG_RECORD_TERMINAL_INPUT_ID     0x011
@@ -145,7 +147,7 @@
 #define USE_AUDIO_USB_RECORD_MULTI_FREQUENCIES 1
 #endif 
 #endif /* USE_USB_AUDIO_RECORDING*/
-
+   
 /* defining the max packet length*/
 #if USE_USB_AUDIO_PLAYBACK
 #if USE_AUDIO_PLAYBACK_USB_FEEDBACK
@@ -191,12 +193,13 @@
 
 /* Exported types ------------------------------------------------------------*/
 /* Exported function ---------------------------------------------------------*/
-uint16_t USB_AUDIO_GetConfigDescriptor(uint8_t **desc);
-void Error_Handler(void);
+   uint16_t USB_AUDIO_GetConfigDescriptor(uint8_t **desc);
+   void Error_Handler(void);
 #ifdef __cplusplus
 }
 #endif
 
 #endif /* __USB_AUDIO_USER_H */
+ 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

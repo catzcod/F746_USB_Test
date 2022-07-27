@@ -32,7 +32,7 @@
 /* define which class is used USE_USB_AUDIO_CLASS_10 : must be defined, future release will supports USE_USB_AUDIO_CLASS_20 */
 #define  USE_USB_AUDIO_CLASS_10 1
 /* for playback project define USE_USB_AUDIO_RECORDING,  for recording project define USE_USB_AUDIO_RECORDING and for si
- * for simultaneous playback and recording define both flags  USE_USB_AUDIO_RECORDING and USE_USB_AUDIO_RECORDING */
+  * for simultaneous playback and recording define both flags  USE_USB_AUDIO_RECORDING and USE_USB_AUDIO_RECORDING */
 #if USE_USB_AUDIO_PLAYBACK
 /* define synchronization method */
 #define USE_AUDIO_PLAYBACK_USB_FEEDBACK 1
@@ -55,7 +55,7 @@
 #define USE_AUDIO_TIMER_VOLUME_CTRL  0   
 #define  USB_AUDIO_CONFIG_PLAY_BUFFER_SIZE (1024 * 10)   
 #endif /* USE_USB_AUDIO_PLAYBACK*/
-
+ 
 #if USE_USB_AUDIO_RECORDING   
 /* definition of channel count and space mapping of channels */
 /* ! Please dont change channel count , other value than 0x02 aren't supported  @TODO add support of multichannel*/
@@ -88,5 +88,6 @@
 #endif
 
 #endif /* __USB_AUDIO_USER_CFG_H */
+ 
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

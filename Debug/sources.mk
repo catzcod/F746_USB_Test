@@ -24,7 +24,6 @@ SUBDIRS := \
 Core/Src \
 Core/Startup \
 Drivers/BSP/Components/wm8994 \
-Drivers/BSP/STM32446E_EVAL \
 Drivers/STM32F7xx_HAL_Driver/Src \
 Middlewares/ST/STM32_USB_Device_Library/Class/AUDIO_10/Src \
 Middlewares/ST/STM32_USB_Device_Library/Core/Src \

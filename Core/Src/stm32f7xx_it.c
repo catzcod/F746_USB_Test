@@ -55,7 +55,7 @@
 /* USER CODE END 0 */
 
 /* External variables --------------------------------------------------------*/
-extern PCD_HandleTypeDef hpcd_USB_OTG_FS;
+extern PCD_HandleTypeDef hpcd;
 /* USER CODE BEGIN EV */
 
 /* USER CODE END EV */
@@ -206,41 +206,12 @@ void OTG_FS_IRQHandler(void)
   /* USER CODE BEGIN OTG_FS_IRQn 0 */
 
   /* USER CODE END OTG_FS_IRQn 0 */
-	//HAL_PCD_IRQHandler(&hpcd); //HAL_PCD_IRQHandler(&hpcd_USB_OTG_FS);
+	HAL_PCD_IRQHandler(&hpcd);
   /* USER CODE BEGIN OTG_FS_IRQn 1 */
 
   /* USER CODE END OTG_FS_IRQn 1 */
 }
 
 /* USER CODE BEGIN 1 */
-#if USE_AUDIO_TIMER_VOLUME_CTRL
-/**
-  * @brief  This function handlestt TIM interrupt request.
-  * @param  None
-  * @retval None
-  */
-void TIM_VolumeChangeIRQHandler(void)
-{
-  HAL_TIM_IRQHandler(&TimHandle);
-}
-#endif /* USE_AUDIO_TIMER_VOLUME_CTRL */
 
-/**
- * @brief This function handles DMA2 Stream 5 interrupt request.
- * @param None
- * @retval None
- */
-void DMA2_Stream6_IRQHandler(void)
-{
-	//HAL_DMA_IRQHandler(haudio_out_sai.hdmatx);
-}
-/**
- * @brief This function handles DMA1 Stream 2 interrupt request.
- * @param None
- * @retval None
- */
-void AUDIO_I2Sx_DMAx_IRQHandler(void)
-{
-	//HAL_DMA_IRQHandler(haudio_in_i2s.hdmarx);
-}
 /* USER CODE END 1 */

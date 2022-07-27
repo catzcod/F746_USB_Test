@@ -35,7 +35,6 @@ extern "C" {
 #include "usbd_desc.h"
 #include "usbd_audio.h"
 #include "usbd_audio_if.h"
-#include "stm32446e_eval_audio_ex.h"
 /* USER CODE END Includes */
 
 /* Exported types ------------------------------------------------------------*/
@@ -50,8 +49,7 @@ extern "C" {
 
 /* Exported macro ------------------------------------------------------------*/
 /* USER CODE BEGIN EM */
-/* User can use this section to tailor TIM_VolumeChange instance used and associated
-   resources */
+/* User can use this section to tailor TIM_VolumeChange instance used and associated resources */
 /* Definition for TIM_VolumeChange clock resources */
 #define TIM_VolumeChange                           TIM3
 #define TIM_VolumeChangeCLK_ENABLE()              __HAL_RCC_TIM3_CLK_ENABLE()
